@@ -5,12 +5,12 @@
 import 'package:meta/meta.dart';
 import 'dart:convert';
 
-Prayingime prayingimeFromJson(String str) => Prayingime.fromJson(json.decode(str));
+PrayingTime prayingimeFromJson(String str) => PrayingTime.fromJson(json.decode(str));
 
-String prayingimeToJson(Prayingime data) => json.encode(data.toJson());
+String prayingimeToJson(PrayingTime data) => json.encode(data.toJson());
 
-class Prayingime {
-    Prayingime({
+class PrayingTime {
+    PrayingTime({
         required this.region,
         required this.date,
         required this.weekday,
@@ -22,7 +22,7 @@ class Prayingime {
     String weekday;
     Times times;
 
-    factory Prayingime.fromJson(Map<String, dynamic> json) => Prayingime(
+    factory PrayingTime.fromJson(Map<String, dynamic> json) => PrayingTime(
         region: json["region"],
         date: DateTime.parse(json["date"]),
         weekday: json["weekday"],

@@ -1,14 +1,61 @@
 import 'package:azon/const/const.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:azon/provider/provider.dart';
+import 'package:azon/service/api.dart';
 import 'package:flutter/material.dart';
-import 'package:cupertino_icons/cupertino_icons.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  DateTime currentTime = DateTime.now();
+  @override
+  void initState() {
+    super.initState();
+    final data = Provider.of<ProviderData>(context, listen: false);
+    data.fetchPrayingTime();
+    final time = data.prayingTime?.times;
+    final nextPrayingTime = time?.asr.split(":")[0];
+    print(currentTime.hour);
+    print(nextPrayingTime);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final data = Provider.of<ProviderData>(context);
+    final time = data.prayingTime?.times;
+    final isBomdod =
+        int.parse(time?.tongSaharlik.split(":")[0] ?? "0") < currentTime.hour
+            ? true
+            : false;
+    final isPeshing =
+        int.parse(time?.peshin.split(":")[0] ?? "0") < currentTime.hour
+            ? true
+            : false;
+    final isAsr = int.parse(time?.asr.split(":")[0] ?? "0") < currentTime.hour
+        ? true
+        : false;
+    final isShom =
+        int.parse(time?.shomIftor.split(":")[0] ?? "0") < currentTime.hour
+            ? true
+            : false;
+    final isHufton =
+        int.parse(time?.hufton.split(":")[0] ?? "0") < currentTime.hour
+            ? true
+            : false;
+    if (data.prayingTime == null) {
+      return const Scaffold(
+        backgroundColor: Color(0xff045757),
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: const Color(0xff045757),
       body: Center(
@@ -18,7 +65,7 @@ class HomeScreen extends StatelessWidget {
           children: [
             const Spacer(),
             Text(
-              "O'zbekiston, Toshkent",
+              "Tong",
               style: Theme.of(context)
                   .textTheme
                   .headlineSmall!
@@ -27,30 +74,17 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "05:17",
-                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                        color: Colors.white,
-                      ),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                const Icon(
-                  Icons.settings_outlined,
-                  color: Colors.white,
-                  size: 30,
-                ),
-              ],
+            Text(
+              data.prayingTime!.times.tongSaharlik,
+              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                    color: Colors.white,
+                  ),
             ),
             const SizedBox(
               height: 10,
             ),
             Text(
-              "Bomdod - 06:09:31",
+              "- 06:09:31",
               style: Theme.of(context)
                   .textTheme
                   .titleMedium!
@@ -60,11 +94,146 @@ class HomeScreen extends StatelessWidget {
               height: 5,
             ),
             Text(
-              "Payshanba, 16-mart",
+              data.prayingTime!.weekday +
+                  "${DateFormat(", dd-MMMM").format(data.prayingTime!.date)}",
               style: Theme.of(context)
                   .textTheme
                   .titleMedium!
                   .copyWith(color: Colors.white),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  "Tong",
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.white),
+                ),
+                Text(
+                  data.prayingTime!.times.tongSaharlik,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.white),
+                ),
+              ],
+            ),
+             SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  "Quyosh",
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.white),
+                ),
+                Text(
+                  data.prayingTime!.times.quyosh,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.white),
+                ),
+              ],
+            ),
+             SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  "Peshin",
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.white),
+                ),
+                Text(
+                  data.prayingTime!.times.peshin,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.white),
+                ),
+              ],
+            ),
+             SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  "Asr",
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.white),
+                ),
+                Text(
+                  data.prayingTime!.times.asr,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.white),
+                ),
+              ],
+            ),
+             SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  "Shom",
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.white),
+                ),
+                Text(
+                  data.prayingTime!.times.shomIftor,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.white),
+                ),
+              ],
+            ),
+             SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  "Hufton",
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.white),
+                ),
+                Text(
+                  data.prayingTime!.times.hufton,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.white),
+                ),
+              ],
             ),
             const Spacer(),
             const SizedBox(
@@ -111,7 +280,9 @@ class HomeScreen extends StatelessWidget {
 
   InkWell categories(BuildContext context, String img, String title) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Api().prayingTime();
+      },
       borderRadius: BorderRadius.circular(10),
       child: Ink(
         decoration: BoxDecoration(

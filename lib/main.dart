@@ -1,8 +1,14 @@
+import 'package:azon/provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider<ProviderData>(
+      create: (context) => ProviderData(),
+    )
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -13,6 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      locale: Locale("uz, UZ"),
       theme: ThemeData(
           // This is the theme of your application.
           //
